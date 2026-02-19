@@ -1,0 +1,67 @@
+version: "2"
+
+linters:
+  default: all
+
+  disable:
+    - wsl
+    - wsl_v5
+    - cyclop # TODO - enable
+    - gosec # TODO - enable
+    - err113 # TODO - enable
+    - revive # TODO - enable
+    - tagalign
+    - depguard
+    - nlreturn
+    - varnamelen
+    - noinlineerr
+    - exhaustruct
+    - testpackage
+    - paralleltest
+    - gochecknoglobals
+    - embeddedstructfieldcheck
+
+  lll:
+    line-length: 140
+
+
+
+run:
+  tests: true
+  timeout: 10m
+  skip-dirs:
+    - vendor
+    - third_party
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+output:
+  sort-results: true
+
+# 494 issues:
+# * cyclop: 1
+# * depguard: 24
+# * embeddedstructfieldcheck: 2
+# * err113: 8
+# * exhaustruct: 61
+# * gochecknoglobals: 3
+# * gochecknoinits: 1
+# * gosec: 4
+# * lll: 7
+# * mnd: 10
+# * modernize: 2
+# * musttag: 7
+# * nilnil: 3
+# * nlreturn: 66
+# * noinlineerr: 45
+# * paralleltest: 49
+# * revive: 52
+# * tagalign: 2
+# * testpackage: 6
+# * varnamelen: 28
+# * whitespace: 1
+# * wrapcheck: 13
+# * wsl: 84
+# * wsl_v5: 15
