@@ -1,5 +1,8 @@
 codecov:
+  branch: master
   require_ci_to_pass: true
+  allow_pseudo_compare: true
+  allow_coverage_offsets: true
 
 coverage:
   status:
