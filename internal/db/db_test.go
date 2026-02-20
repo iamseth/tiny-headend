@@ -76,6 +76,12 @@ func TestMigrateCreatesContentAndChannelTables(t *testing.T) {
 		t.Fatalf("migrate db: %v", err)
 	}
 
+	if !g.Migrator().HasTable("content") {
+		t.Fatalf("expected table named content to exist after migration")
+	}
+	if g.Migrator().HasTable("contents") {
+		t.Fatalf("expected table named contents to not exist after migration")
+	}
 	if !g.Migrator().HasTable(&model.Content{}) {
 		t.Fatalf("expected content table to exist after migration")
 	}

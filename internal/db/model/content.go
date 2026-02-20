@@ -16,6 +16,10 @@ type Content struct {
 	Length float64 `gorm:"not null" json:"length"`
 }
 
+func (Content) TableName() string {
+	return "content"
+}
+
 type ContentRepo struct {
 	db *gorm.DB
 }
