@@ -1,5 +1,10 @@
 # tiny-headend
 
+[![Build Status](https://github.com/iamseth/tiny-headend/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/iamseth/tiny-headend/actions/workflows/ci.yml)
+[![Code Coverage](https://codecov.io/gh/iamseth/tiny-headend/branch/master/graph/badge.svg)](https://codecov.io/gh/iamseth/tiny-headend)
+[![Go Report Card](https://goreportcard.com/badge/github.com/iamseth/tiny-headend)](https://goreportcard.com/report/github.com/iamseth/tiny-headend)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/iamseth/tiny-headend)](https://github.com/iamseth/tiny-headend/blob/master/go.mod)
+
 # Configuration
 
 Runtime config is resolved in this order:

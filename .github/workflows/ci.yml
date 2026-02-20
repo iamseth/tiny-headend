@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,6 +24,15 @@ jobs:
 
       - name: Run tests
         run: make test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          files: ./.cache/coverage.out
+          flags: unittests
+          fail_ci_if_error: true
+          verbose: true
 
       - name: Build binary
         run: make build
