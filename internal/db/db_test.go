@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/iamseth/tiny-headend/internal/db/model"
 )
 
 func TestOpenConfiguresSQLitePragmas(t *testing.T) {
@@ -54,5 +56,27 @@ func TestOpenConfiguresSQLitePragmas(t *testing.T) {
 	}
 	if stats.MaxOpenConnections != 1 {
 		t.Fatalf("expected max open conns 1, got %d", stats.MaxOpenConnections)
+	}
+}
+
+func TestMigrateCreatesContentTable(t *testing.T) {
+	dbPath := filepath.Join(t.TempDir(), "tiny-headend-migrate-test.db")
+
+	g, err := Open(dbPath)
+	if err != nil {
+		t.Fatalf("open db: %v", err)
+	}
+	defer func() {
+		if closeErr := Close(g); closeErr != nil {
+			t.Fatalf("close db: %v", closeErr)
+		}
+	}()
+
+	if err := Migrate(g); err != nil {
+		t.Fatalf("migrate db: %v", err)
+	}
+
+	if !g.Migrator().HasTable(&model.Content{}) {
+		t.Fatalf("expected content table to exist after migration")
 	}
 }
