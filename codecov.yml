@@ -14,5 +14,6 @@ coverage:
         informational: true
 
 ignore:
+  - "main.go"
   - "cmd/**"
   - "internal/config/**"
