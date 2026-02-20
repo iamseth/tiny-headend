@@ -30,8 +30,11 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
+          use_oidc: true
           files: ./.cache/coverage.out
-          token: ${{ secrets.CODECOV_TOKEN }}
+          disable_search: true
+          fail_ci_if_error: true
+          verbose: true
 
       - name: Build binary
         run: make build
