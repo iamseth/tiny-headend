@@ -43,7 +43,7 @@ func Close(g *gorm.DB) error {
 }
 
 func Migrate(g *gorm.DB) error {
-	if err := g.AutoMigrate(&model.Content{}); err != nil {
+	if err := g.AutoMigrate(&model.Content{}, &model.Channel{}); err != nil {
 		return fmt.Errorf("auto-migrate db schema: %w", err)
 	}
 	return nil

@@ -59,7 +59,7 @@ func TestOpenConfiguresSQLitePragmas(t *testing.T) {
 	}
 }
 
-func TestMigrateCreatesContentTable(t *testing.T) {
+func TestMigrateCreatesContentAndChannelTables(t *testing.T) {
 	dbPath := filepath.Join(t.TempDir(), "tiny-headend-migrate-test.db")
 
 	g, err := Open(dbPath)
@@ -78,5 +78,8 @@ func TestMigrateCreatesContentTable(t *testing.T) {
 
 	if !g.Migrator().HasTable(&model.Content{}) {
 		t.Fatalf("expected content table to exist after migration")
+	}
+	if !g.Migrator().HasTable(&model.Channel{}) {
+		t.Fatalf("expected channel table to exist after migration")
 	}
 }
