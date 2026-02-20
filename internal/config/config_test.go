@@ -10,6 +10,7 @@ func TestLoadFromEnvOverridesDefaults(t *testing.T) {
 	t.Setenv(envDBPath, "db.sqlite")
 	t.Setenv(envHTTPAddr, ":9090")
 	t.Setenv(envConfigPath, "/tmp/tiny-headend.yaml")
+	t.Setenv(envScanEnabled, "true")
 	t.Setenv(envScanPath, "/mnt/media")
 	t.Setenv(envScanInterval, "45s")
 	t.Setenv(envDBPingTimeout, "4s")
@@ -31,6 +32,7 @@ func TestLoadFromEnvOverridesDefaults(t *testing.T) {
 		DBPath:            "db.sqlite",
 		HTTPAddr:          ":9090",
 		ConfigPath:        "/tmp/tiny-headend.yaml",
+		ScanEnabled:       true,
 		ScanPath:          "/mnt/media",
 		ScanInterval:      45 * time.Second,
 		DBPingTimeout:     4 * time.Second,
@@ -69,5 +71,17 @@ func TestLoadFromEnvReturnsErrorOnEmptyRequiredValue(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), envDBPath) {
 		t.Fatalf("expected error mentioning %s, got %v", envDBPath, err)
+	}
+}
+
+func TestLoadFromEnvReturnsErrorOnInvalidBool(t *testing.T) {
+	t.Setenv(envScanEnabled, "not-a-bool")
+
+	_, err := LoadFromEnv()
+	if err == nil {
+		t.Fatal("expected error for invalid bool")
+	}
+	if !strings.Contains(err.Error(), envScanEnabled) {
+		t.Fatalf("expected error mentioning %s, got %v", envScanEnabled, err)
 	}
 }

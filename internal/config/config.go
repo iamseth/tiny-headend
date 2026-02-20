@@ -12,6 +12,7 @@ const (
 	envDBPath              = "TINY_HEADEND_DB_PATH"
 	envHTTPAddr            = "TINY_HEADEND_HTTP_ADDR"
 	envConfigPath          = "TINY_HEADEND_CONFIG_PATH"
+	envScanEnabled         = "TINY_HEADEND_SCAN_ENABLED"
 	envScanPath            = "TINY_HEADEND_SCAN_PATH"
 	envScanInterval        = "TINY_HEADEND_SCAN_INTERVAL"
 	envDBPingTimeout       = "TINY_HEADEND_DB_PING_TIMEOUT"
@@ -27,6 +28,7 @@ const (
 	defaultDBPath            = "tiny-headend.db"
 	defaultHTTPAddr          = ":8080"
 	defaultConfigPath        = "$HOME/.tiny-headend.yaml"
+	defaultScanEnabled       = false
 	defaultScanPath          = ""
 	defaultScanInterval      = 30 * time.Second
 	defaultDBPingTimeout     = 3 * time.Second
@@ -44,6 +46,7 @@ type Config struct {
 	DBPath            string
 	HTTPAddr          string
 	ConfigPath        string
+	ScanEnabled       bool
 	ScanPath          string
 	ScanInterval      time.Duration
 	DBPingTimeout     time.Duration
@@ -62,6 +65,7 @@ func Default() Config {
 		DBPath:            defaultDBPath,
 		HTTPAddr:          defaultHTTPAddr,
 		ConfigPath:        defaultConfigPath,
+		ScanEnabled:       defaultScanEnabled,
 		ScanPath:          defaultScanPath,
 		ScanInterval:      defaultScanInterval,
 		DBPingTimeout:     defaultDBPingTimeout,
@@ -83,6 +87,9 @@ func LoadFromEnv() (Config, error) {
 		return Config{}, err
 	}
 	if err := loadDurationConfig(&cfg); err != nil {
+		return Config{}, err
+	}
+	if err := loadBoolConfig(&cfg); err != nil {
 		return Config{}, err
 	}
 	if err := loadNumericConfig(&cfg); err != nil {
@@ -169,6 +176,17 @@ func loadDurationConfig(cfg *Config) error {
 	return nil
 }
 
+func loadBoolConfig(cfg *Config) error {
+	var err error
+
+	cfg.ScanEnabled, err = loadBool(envScanEnabled, cfg.ScanEnabled)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func loadNumericConfig(cfg *Config) error {
 	var err error
 
@@ -214,6 +232,25 @@ func loadDuration(key string, defaultValue time.Duration) (time.Duration, error)
 	}
 
 	return duration, nil
+}
+
+func loadBool(key string, defaultValue bool) (bool, error) {
+	raw, ok := os.LookupEnv(key)
+	if !ok {
+		return defaultValue, nil
+	}
+
+	value := strings.TrimSpace(raw)
+	if value == "" {
+		return false, fmt.Errorf("environment variable %s must not be empty", key)
+	}
+
+	parsed, err := strconv.ParseBool(value)
+	if err != nil {
+		return false, fmt.Errorf("parse environment variable %s as bool: %w", key, err)
+	}
+
+	return parsed, nil
 }
 
 func loadInt(key string, defaultValue int) (int, error) {
