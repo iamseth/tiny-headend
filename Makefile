@@ -41,7 +41,7 @@ tidy: ## Tidy and verify module dependencies
 	GOCACHE=$(GOCACHE) $(GO) mod verify
 
 clean: ## Remove build artifacts
-	rm -rf $(BIN_DIR) .cache
+	rm -rf $(BIN_DIR) .cache coverage.out
 
 run: build ## Build and run the binary
 	./$(OUTPUT) $(ARGS)
