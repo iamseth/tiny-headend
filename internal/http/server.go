@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/iamseth/tiny-headend/internal/http/handler"
 	"github.com/iamseth/tiny-headend/internal/service"
 )
 
@@ -29,8 +30,8 @@ func New(cfg Config, deps Deps) *nethttp.Server {
 	router := chi.NewRouter()
 	router.Use(requestLogger, recoverPanic)
 
-	contentH := NewContentHandler(deps.Content)
-	healthH := NewHealthHandler(deps.HealthCheck)
+	contentH := handler.NewContentHandler(deps.Content)
+	healthH := handler.NewHealthHandler(deps.HealthCheck)
 	router.Get("/healthz", healthH.Get)
 	router.Post("/content", contentH.Create)
 	router.Get("/content", contentH.List)

@@ -11,6 +11,31 @@ import (
 	"github.com/iamseth/tiny-headend/internal/service"
 )
 
+const validContentJSON = `{"title":"t","path":"/tmp/f.ts","size":1,"length":1}`
+
+type serverStubContentRepo struct{}
+
+func (serverStubContentRepo) Create(_ context.Context, c *service.Content) error {
+	c.ID = 1
+	return nil
+}
+
+func (serverStubContentRepo) GetByID(context.Context, uint) (*service.Content, error) {
+	return nil, service.ErrNotFound
+}
+
+func (serverStubContentRepo) List(context.Context, int, int) ([]service.Content, error) {
+	return nil, nil
+}
+
+func (serverStubContentRepo) Update(context.Context, *service.Content) error {
+	return nil
+}
+
+func (serverStubContentRepo) Delete(context.Context, uint) error {
+	return nil
+}
+
 func TestNewConfiguresServerAndRoutes(t *testing.T) {
 	cfg := Config{
 		Addr:              ":1234",
@@ -22,7 +47,7 @@ func TestNewConfiguresServerAndRoutes(t *testing.T) {
 	}
 
 	srv := New(cfg, Deps{
-		Content:     service.NewContentService(&stubContentRepo{}),
+		Content:     service.NewContentService(serverStubContentRepo{}),
 		HealthCheck: func(context.Context) error { return nil },
 	})
 
