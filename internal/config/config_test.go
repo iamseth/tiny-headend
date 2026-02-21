@@ -10,9 +10,6 @@ func TestLoadFromEnvOverridesDefaults(t *testing.T) {
 	t.Setenv(envDBPath, "db.sqlite")
 	t.Setenv(envHTTPAddr, ":9090")
 	t.Setenv(envConfigPath, "/tmp/tiny-headend.yaml")
-	t.Setenv(envScanEnabled, "true")
-	t.Setenv(envScanPath, "/mnt/media")
-	t.Setenv(envScanInterval, "45s")
 	t.Setenv(envDBPingTimeout, "4s")
 	t.Setenv(envHealthPingTimeout, "3s")
 	t.Setenv(envReadHeaderTimeout, "1s")
@@ -32,9 +29,6 @@ func TestLoadFromEnvOverridesDefaults(t *testing.T) {
 		DBPath:            "db.sqlite",
 		HTTPAddr:          ":9090",
 		ConfigPath:        "/tmp/tiny-headend.yaml",
-		ScanEnabled:       true,
-		ScanPath:          "/mnt/media",
-		ScanInterval:      45 * time.Second,
 		DBPingTimeout:     4 * time.Second,
 		HealthPingTimeout: 3 * time.Second,
 		ReadHeaderTimeout: time.Second,
@@ -75,14 +69,10 @@ func TestLoadFromEnvReturnsErrorOnEmptyRequiredValue(t *testing.T) {
 }
 
 func TestLoadFromEnvReturnsErrorOnInvalidBool(t *testing.T) {
-	t.Setenv(envScanEnabled, "not-a-bool")
 
 	_, err := LoadFromEnv()
 	if err == nil {
 		t.Fatal("expected error for invalid bool")
-	}
-	if !strings.Contains(err.Error(), envScanEnabled) {
-		t.Fatalf("expected error mentioning %s, got %v", envScanEnabled, err)
 	}
 }
 
@@ -110,25 +100,11 @@ func TestLoadStringConfigReturnsErrorForRequiredVariables(t *testing.T) {
 		})
 	}
 }
-
-func TestLoadStringConfigAllowsEmptyOptionalScanPath(t *testing.T) {
-	t.Setenv(envScanPath, "   ")
-	cfg := Default()
-
-	if err := loadStringConfig(&cfg); err != nil {
-		t.Fatalf("load string config: %v", err)
-	}
-	if cfg.ScanPath != "" {
-		t.Fatalf("expected empty scan path, got %q", cfg.ScanPath)
-	}
-}
-
 func TestLoadDurationConfigReturnsErrorForEachDurationVariable(t *testing.T) {
 	tests := []struct {
 		name string
 		key  string
 	}{
-		{name: "scan interval", key: envScanInterval},
 		{name: "db ping timeout", key: envDBPingTimeout},
 		{name: "health ping timeout", key: envHealthPingTimeout},
 		{name: "read header timeout", key: envReadHeaderTimeout},

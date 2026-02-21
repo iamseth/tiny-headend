@@ -14,16 +14,12 @@ Runtime config is resolved in this order:
 3. Built-in defaults
 
 Durations use Go duration format (examples: `500ms`, `5s`, `2m`).
-Automatic scanning is disabled by default; content can always be added manually via the API.
 
 | Environment Variable | Description | Default |
 |---|---|---|
 | `TINY_HEADEND_DB_PATH` | SQLite database file path | `tiny-headend.db` |
 | `TINY_HEADEND_HTTP_ADDR` | HTTP bind address | `:8080` |
 | `TINY_HEADEND_CONFIG_PATH` | Default value for `--config` | `$HOME/.tiny-headend.yaml` |
-| `TINY_HEADEND_SCAN_ENABLED` | Default value for `--scan-enabled` | `false` |
-| `TINY_HEADEND_SCAN_PATH` | Default value for `--scan-path` | `""` |
-| `TINY_HEADEND_SCAN_INTERVAL` | Default value for `--scan-interval` | `30s` |
 | `TINY_HEADEND_DB_PING_TIMEOUT` | Startup DB ping timeout | `3s` |
 | `TINY_HEADEND_HEALTH_PING_TIMEOUT` | Health check DB ping timeout | `2s` |
 | `TINY_HEADEND_SERVER_READ_HEADER_TIMEOUT` | HTTP server read-header timeout | `2s` |
@@ -39,9 +35,6 @@ Example:
 ```bash
 export TINY_HEADEND_HTTP_ADDR=":9090"
 export TINY_HEADEND_DB_PATH="/var/lib/tiny-headend/tiny-headend.db"
-export TINY_HEADEND_SCAN_ENABLED="true"
-export TINY_HEADEND_SCAN_PATH="/srv/media"
-export TINY_HEADEND_SCAN_INTERVAL="45s"
 ./bin/tiny-headend
 ```
 

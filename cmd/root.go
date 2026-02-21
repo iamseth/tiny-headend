@@ -17,18 +17,14 @@ import (
 	"github.com/iamseth/tiny-headend/internal/db"
 	"github.com/iamseth/tiny-headend/internal/db/model"
 	tinyhttp "github.com/iamseth/tiny-headend/internal/http"
-	"github.com/iamseth/tiny-headend/internal/scanner"
 	"github.com/iamseth/tiny-headend/internal/service"
 	"github.com/spf13/cobra"
 	"gorm.io/gorm"
 )
 
 var (
-	cfgFile      string
-	scanEnabled  bool
-	scanPath     string
-	scanInterval time.Duration
-	appConfig    config.Config
+	cfgFile   string
+	appConfig config.Config
 )
 
 var registerFlagsOnce sync.Once
@@ -50,9 +46,6 @@ Environment variables:
   TINY_HEADEND_DB_PATH
   TINY_HEADEND_HTTP_ADDR
   TINY_HEADEND_CONFIG_PATH
-  TINY_HEADEND_SCAN_ENABLED
-  TINY_HEADEND_SCAN_PATH
-  TINY_HEADEND_SCAN_INTERVAL
   TINY_HEADEND_DB_PING_TIMEOUT
   TINY_HEADEND_HEALTH_PING_TIMEOUT
   TINY_HEADEND_SERVER_READ_HEADER_TIMEOUT
@@ -106,15 +99,6 @@ Environment variables:
 
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 		defer stop()
-
-		if scanEnabled {
-			contentScanner, err := scanner.NewContentScanner(scanPath, scanInterval, deps.Content)
-			if err != nil {
-				return fmt.Errorf("failed to setup content scanner: %w", err)
-			}
-			contentScanner.Start(ctx)
-			slog.Info("content scanner started", "path", scanPath, "interval", scanInterval.String())
-		}
 
 		errCh := make(chan error, 1)
 		startPeriodicHealthLog(ctx, g, appConfig.HealthLogInterval)
@@ -209,24 +193,6 @@ func registerRootFlags() {
 		"config",
 		appConfig.ConfigPath,
 		"config file (default is $HOME/.tiny-headend.yaml)",
-	)
-	rootCmd.Flags().StringVar(
-		&scanPath,
-		"scan-path",
-		appConfig.ScanPath,
-		"directory path to scan for new content",
-	)
-	rootCmd.Flags().BoolVar(
-		&scanEnabled,
-		"scan-enabled",
-		appConfig.ScanEnabled,
-		"enable automatic content scanning",
-	)
-	rootCmd.Flags().DurationVar(
-		&scanInterval,
-		"scan-interval",
-		appConfig.ScanInterval,
-		"interval between content scans",
 	)
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
